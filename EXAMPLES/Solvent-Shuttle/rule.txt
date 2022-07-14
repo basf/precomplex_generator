@@ -1,0 +1,4 @@
+add alcohol 3 acid 2
+break alcohol 3 9
+add alcohol 9 acid 4
+solvent h2o 2 1

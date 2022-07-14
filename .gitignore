@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+**.so
+
+# Distribution / packaging
+.Python
+build/
+install/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
