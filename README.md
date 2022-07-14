@@ -49,6 +49,6 @@ The rule.txt file contains the "reaction rule" in terms of atom-specific bond fo
 The COMMAND file contains the respective command you need.
 
 For example:
-python ../../precomplex_generator/main.py mol_name_1 mol_name_2 -r rule.txt
+prec_gen mol_name_1 mol_name_2 -r rule.txt
 ```
 
