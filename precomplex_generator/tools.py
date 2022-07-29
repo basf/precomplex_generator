@@ -21,17 +21,29 @@ from __future__ import division, print_function, unicode_literals
 try:
     from pymatgen import Molecule
     from pymatgen.io.babel import BabelMolAdaptor
-    from StructureGeneration.symmetry_tools import *
+    # from StructureGeneration.symmetry_tools import *
 except:
     pass
 
-import openbabel as ob
+from openbabel import openbabel as ob
 import os, sys
 import networkx as nx
 import numpy as np
 import itertools
 import fnmatch
 import traceback
+from element_dict import element_dict
+
+# from openbabel import OBElementTable -> OBElementTable now removed
+# // OB 2.x
+# OBElementTable etab;
+# const char *elem = etab.GetSymbol(6);
+# unsigned int atomic_num = etab.GetAtomicNum(elem);
+
+# // OB 3.0
+# #include <openbabel/elements.h>
+# const char *elem = OBElements::GetSymbol(6);
+# unsigned int atomic_num = OBElements::GetAtomicNum(elem);
 
 
 def ShortestPathSearch(obmol, a1, a2):
@@ -39,7 +51,7 @@ def ShortestPathSearch(obmol, a1, a2):
     """
     Search for shortest path between two atoms (a1 and a2) in an openbabel molecule (obmol).
     """
-    
+
     edges = []
     for bond in ob.OBMolBondIter(obmol):
         atom1 = bond.GetBeginAtom()
@@ -56,7 +68,7 @@ def ShortestPathSearch(obmol, a1, a2):
 
     return len(path), path
 
-def RingSearch(obmols, atIDs): 
+def RingSearch(obmols, atIDs):
 
     """
     Search for rings in 1 or 2 openbabel molecules
@@ -64,7 +76,7 @@ def RingSearch(obmols, atIDs):
     """
 
     # intramolecular reaction
-    if len(obmols) == 1: 
+    if len(obmols) == 1:
         obmol1 = obmols[0]["obm"]
         obmol2 = obmols[0]["obm"]
         atID1 = atIDs[0][0]
@@ -212,7 +224,7 @@ def kov_rad(symbol1, symbol2):
     """
     Determine "covalent radius" between two atoms (plus 0.3 Angstrom)
     """
-    
+
     rad = {"H": 0.32, "He": 0.32,
            "Li": 0.76, "Be": 0.45, "B": 0.82, "C": 0.77, "N": 0.71, "O": 0.73, "F": 0.71, "Ne": 0.69,
            "Na": 1.02, "Mg": 0.72, "Al": 0.535, "Si": 1.11, "P": 1.06, "S": 1.02, "Cl": 0.99, "Ar": 0.97,
@@ -232,7 +244,7 @@ def kov_rad(symbol1, symbol2):
     rad_1 = rad[symbol1]
     rad_2 = rad[symbol2]
 
-    #ToDo: check factor 
+    #ToDo: check factor
     #rad_out = 1.3*(rad_1+rad_2)
     rad_out = rad_1+rad_2+0.3
 
@@ -343,7 +355,7 @@ def input_gen(new_data=None, data=None, case=None):
         if ['$tors'] not in data:
             data.append(['$tors'])
 
-    if len(data) == 1:                                  
+    if len(data) == 1:
         if len(new_data) == 3:
             data.append(new_data)
         elif len(new_data) > 3:
@@ -879,11 +891,11 @@ def gen_sadd(path=None, sadd_factor=None):
     return str(round(sadd_thresh, 2))
 
 def readMols(name, type="xyz", workdir="."):
-    
+
     """
     Read XYZ files and generate openbabel and pymatgen molecule objects.
     """
-    
+
     datei = ".".join([name, type])
     try:
         pmg = Molecule.from_file(os.path.join(workdir, datei))
@@ -931,14 +943,15 @@ def connectivity(mol=None):
     """
     Determine connectivity based on distance-cutoffs and covalent radii determination.
     """
-    
+
     mol_ob = BabelMolAdaptor(mol).openbabel_mol
     edges = []
     symbols = []
 
     for atom in ob.OBMolAtomIter(mol_ob):
-        symbols.append(ob.OBElementTable().GetSymbol(atom.GetAtomicNum()))
-    
+        # symbols.append(ob.OBElements.GetSymbol(atom.GetAtomicNum()))
+        symbols.append(element_dict[atom.GetAtomicNum()])
+
     #Generate connectivity table:
 
     for i, atom1 in enumerate(ob.OBMolAtomIter(mol_ob)):
@@ -998,7 +1011,7 @@ def modifyOBM(obm, diff):
 
 def getEducts(mols, verbose=False, adds=None):
     """
-    Get list of "educt dictionaries" containing a "name", "type", "obm" (openbabel molecule object), 
+    Get list of "educt dictionaries" containing a "name", "type", "obm" (openbabel molecule object),
     "pmg" (pymatgen molecule object) and "Number_of_Atoms"
     """
     educts = []

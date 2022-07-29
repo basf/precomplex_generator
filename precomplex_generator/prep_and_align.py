@@ -19,16 +19,15 @@
 
 import numpy as np
 import pymatgen as pmg
-import openbabel as ob
+from openbabel import openbabel as ob
 from pymatgen.core.structure import Molecule
-from prec_gen.get_all_torsions_mod import get_tors
-from precomplex_generator.tools import file_read_dict, file_read_list, angle_func, norm_vec
-from precomplex_generator.tools import center_of_points, rot_mat, project_onto_plane, dihed_avg, angle_avg
-from precomplex_generator.tools import kov_radius, get_key
+from get_all_torsions_mod import get_tors
+from tools import file_read_dict, file_read_list, angle_func, norm_vec, center_of_points, rot_mat, project_onto_plane, dihed_avg, angle_avg, kov_radius, get_key
 import os
 import sys
 import math
 from copy import deepcopy
+from element_dict import element_dict
 
 
 def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):
@@ -138,8 +137,8 @@ def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):
                 rvecs = [norm_vec(np.cross(v1, v2)), norm_vec(np.cross(v2, v1))]
                 short_type = 'tpl'
 
-            elif 80 <= angle <= 130 and 80 <= dihed <= 160:  
-                rvecs = [norm_vec(atomCoord - cop_n)] 
+            elif 80 <= angle <= 130 and 80 <= dihed <= 160:
+                rvecs = [norm_vec(atomCoord - cop_n)]
                 short_type = 'tpy'
 
             rvecs_small_ring = rvecs
@@ -158,7 +157,7 @@ def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):
                 rvecs_start = [norm_vec(atomCoord - cop_n)]
                 rvecs = [norm_vec(rvecs_start[0] + rvecs_horizontal[0])]
                 short_type = 'ang'
-            
+
             rvecs_small_ring = rvecs
 
         elif numNeigh == 1:
@@ -187,7 +186,7 @@ def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):
 
             # for small rings, assume 180°, even if own_angle is different!
             rvecs_small_ring = [norm_vec(atomCoord - neighCoord[0])]
-            
+
         elif numNeigh == 0:
             rvecs = [np.array([0, 0, 1])]
             rvecs_small_ring = rvecs
@@ -212,13 +211,14 @@ def write_out_conn(educt=None):
     """
     Write out connectivity file.
     """
-    
+
     name = educt["name"]+"_conn.dat"
     neighbour_dic = {}
 
     for atom in ob.OBMolAtomIter(educt["obm"]):
         id1 = atom.GetIdx()
-        symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+        # symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+        symbol1 = element_dict[atom.GetAtomicNum()]
         tmp = []
         nneigh = 0
         for neigh in ob.OBAtomAtomIter(atom):
@@ -227,12 +227,12 @@ def write_out_conn(educt=None):
             neighbour_string = str(id2)
             tmp.append(neighbour_string)
         neighbour_dic[str(id1)] = str(id1) + " " + symbol1 + " " + str(nneigh)+" "+" ".join(sorted(tmp))
-    
+
     with open(name, "w") as out:
         for key in neighbour_dic.keys():
             out.write(neighbour_dic[key]+"\n")
-    
-    
+
+
 def write_out_disconn(educts=None):
 
     """
@@ -250,7 +250,8 @@ def write_out_disconn(educts=None):
         indexShift = i*shift
         for atom in ob.OBMolAtomIter(mol["obm"]):
             id1 = atom.GetIdx()+indexShift
-            symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+            # symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+            symbol1 = element_dict[atom.GetAtomicNum()]
             tmp = []
             nneigh = 0
             for neigh in ob.OBAtomAtomIter(atom):
@@ -259,7 +260,7 @@ def write_out_disconn(educts=None):
                 neighbour_string = str(id2)
                 tmp.append(neighbour_string)
             neighbour_dic[str(id1)] = str(id1) + " " + symbol1 + " " + str(nneigh) + " " + " ".join(sorted(tmp))
-    
+
     with open(name, "w") as out:
         for key in neighbour_dic.keys():
             out.write(neighbour_dic[key] + "\n")
@@ -356,7 +357,7 @@ def rvec_align(educt_names=None, educts=None, addRule=None, breakRules=None, top
     key1 = get_key(inp_dict=topo1_keys, ra=ra1)
     key2 = get_key(inp_dict=topo2_keys, ra=ra2)
     topo_keys = [key1, key2]
-    
+
     problem = False
 
     if topos[educt_names[0]][key1] != None:
@@ -466,7 +467,7 @@ def rvec_align(educt_names=None, educts=None, addRule=None, breakRules=None, top
 def sn2_align(pmg_dict, ra_dict=None, sum_rads=None, addRule=None, breakRules=None, rvec_dict=None, user_dist=None):
 
     """
-    Take care of SN2-like reactions (= addition to tetrahedral center with simultaneous breakage of one bond 
+    Take care of SN2-like reactions (= addition to tetrahedral center with simultaneous breakage of one bond
     connected to the "center" atom)
     :param pmg_dict:
     :param ra_dict:
@@ -502,8 +503,8 @@ def sn2_align(pmg_dict, ra_dict=None, sum_rads=None, addRule=None, breakRules=No
             invert = True
 
         for x in breakRules[1:3]: # loop over atoms in break rule (summed up)
-            if x is not ra_tot_dict[tet]: 
-                cl_break.append(x) 
+            if x is not ra_tot_dict[tet]:
+                cl_break.append(x)
         if len(cl_break) > 2:
             print("Add and break are NOT connected!!!")
 
@@ -545,7 +546,7 @@ def sn2_align(pmg_dict, ra_dict=None, sum_rads=None, addRule=None, breakRules=No
                 cl_break.append(x)
 
     # Actual alignment of the molecules after all the preparational work with the rules
-    if len(cl_break) != 2: 
+    if len(cl_break) != 2:
         break_vec = -rvec_dict[tet][0] # just take one of the tet. reaction vectors as break vector (randomly the first)
     else:
         break_vec = norm_vec(pmg_dict[tet][ra_dict[tet] - 1].coords - \
@@ -561,7 +562,7 @@ def sn2_align(pmg_dict, ra_dict=None, sum_rads=None, addRule=None, breakRules=No
     rvec_tet = -vec
 
     return_mol = None
-    
+
     for rvec_oth in rvec_dict[oth]:
 
         moltemp_tet = pmg_dict[tet].copy()
@@ -577,7 +578,7 @@ def sn2_align(pmg_dict, ra_dict=None, sum_rads=None, addRule=None, breakRules=No
         t1 = pmg.core.operations.SymmOp.from_rotation_and_translation(
             translation_vec=user_dist * (sum_rads) * break_vec_rot + np.array([0, 0, 1E-3]))
         moltemp_oth.apply_operation(t1)
-        
+
         if not invert:
             for i in moltemp_oth:
                 moltemp_tet.append(species=i.species_string, coords=i.coords, validate_proximity=False)

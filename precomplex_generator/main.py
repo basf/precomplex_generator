@@ -18,9 +18,9 @@
 # along with the precomplex_generator. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
-from precomplex_generator.tools import add_rule_stand, break_rule_stand, getEducts, genDisConn
-from precomplex_generator.prep_and_align import write_out_disconn, topo_analysis
-from precomplex_generator.precomp_builder import preCompBuild
+from tools import add_rule_stand, break_rule_stand, getEducts, genDisConn
+from prep_and_align import write_out_disconn, topo_analysis
+from precomp_builder import preCompBuild
 import os, sys
 import shutil
 import json
@@ -43,11 +43,11 @@ def prep_topo(educts=None, educt_names=None, own_angle=None, shuttle=None, shutt
     elif len(educt_names) == 2:
         for i, educt_name in enumerate(educt_names):
             topoData[educt_name] = topo_analysis(educt_name=educt_name, educt=educts[i], own_angle=own_angle)
-    
+
     if shuttle != None:
         if shuttle[0] != "None":
             topoData[shuttle[0]] = topo_analysis(educt_name=shuttle[0], educt=shuttle_mol[0], shuttle=True)
-    
+
     ### Make class instance of Pre-Complex-Builder class
     genDisConn(structures=educts)
     write_out_disconn(educts)
@@ -106,7 +106,7 @@ def generatePreComplex(rule, educt_names=None, educts=None, build_class=None, sh
         shutil.copyfile(execPath + '/' + educt_names[0] + '_conn.dat', rule_path + '/' + educt_names[0] + '_conn.dat')
 
         precomplexes = build_class.solventShuttle(topos=topos, addRule=addRule, breakRule=breakRule,
-                                                  educt_names=educt_names, educts=educts, 
+                                                  educt_names=educt_names, educts=educts,
                                                   preCompList=[], shuttle=shuttle, shuttle_mol=shuttle_mol)
 
     elif len(educt_names) == 2 and len(addRule) == 8 and shuttle_mol != None:
@@ -132,7 +132,7 @@ def main():
                         help='Specification of one single rule to be calculated')
     args = parser.parse_args()
 
-    types = ["xyz", "xyz"]  
+    types = ["xyz", "xyz"]
     if not len(args.educts) > 0 or not len(types) > 0:
         raise SystemError("Please provide at least 1 input molecule!")
 
@@ -183,7 +183,7 @@ def main():
     shuttle=("None", 0, 0)
     solvent_pmg = None
     solvent_name = None
-    
+
 
     with open(args.r, "r") as inp_data:
         if args.r[-4:] == "json":
@@ -208,7 +208,7 @@ def main():
                         atom_id_2 = int(line.split()[3]) + natoms
                     else:
                         atom_id_1 = int(line.split()[2])
-                        atom_id_2 = int(line.split()[3]) 
+                        atom_id_2 = int(line.split()[3])
                     rule["BREAK"].append([educt_names.index(line.split()[1]), atom_id_1, atom_id_2])
                 elif line.split()[0].lower() == "solvent":
                     solvent_name = line.split()[1]
@@ -216,7 +216,7 @@ def main():
                 else:
                     print(line.split()[0].lower())
                     sys.exit("ERROR in rule.txt file!")
-	
+
     if solvent_name != None:
         smol = [{"name": solvent_name, "type": "xyz"}]
         shuttle_mol = getEducts(smol, verbose=True)
@@ -228,7 +228,7 @@ def main():
     # Initialize preCompBuild class with the given educt structure, names, topology data and precomplex settings
     build_class = preCompBuild(educts=educts, educt_names=educt_names, structures=educts, topos=topoData,
                                 prec_settings=prec_settings, solvent_pmg=solvent_pmg)
-        
+
     # Generate Precomplexes
     precomplexes = generatePreComplex(rule=rule, build_class=build_class, educt_names=educt_names, educts=educts,
                                       shuttle=shuttle, shuttle_mol=shuttle_mol)

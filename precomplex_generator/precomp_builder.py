@@ -22,15 +22,16 @@ import os
 import sys
 import shutil
 import networkx as nx
-import openbabel as ob
+from openbabel import openbabel as ob
 import itertools
-from prec_gen.get_all_torsions_mod import get_tors
+from get_all_torsions_mod import get_tors
 import numpy as np
-from precomplex_generator.tools import angle_func, RingSearch, get_key, norm_vec
-from precomplex_generator.prep_and_align import rvec_align, addSolv
-import prec_gen.final as final
+from tools import angle_func, RingSearch, get_key, norm_vec
+from prep_and_align import rvec_align, addSolv
+import final
 from copy import deepcopy
-from precomplex_generator.tools import file_read_dict, file_read_list, file_write, input_gen, reg_precomp, gen_sadd, check_for_rings
+from tools import file_read_dict, file_read_list, file_write, input_gen, reg_precomp, gen_sadd, check_for_rings
+from element_dict import element_dict
 
 
 from platform import python_version
@@ -45,7 +46,7 @@ class preCompBuild():
     """
     Class which contains all information needed for precomplex generation
     """
-    
+
     def __init__(self, educt_names=None, educts=None, structures=None, topos=None, prec_settings=None, solvent_pmg=None):
 
         self.structures = structures #dictionary containing pymatgen and openbabel molecule object (and more info)
@@ -59,7 +60,7 @@ class preCompBuild():
     def mod_conn(self, rule, id, fileIn, fileOut):
 
         ### Write Connectivity of rule into file
-        
+
         if len(rule) == 4 or len(rule) == 8:
             ra1 = rule[2] - 1
             ra2 = rule[3] + id - 1
@@ -138,8 +139,8 @@ class preCompBuild():
     def getNeighborBonds(self, atoms=None, torsList=None, connDict=None, num_spheres=None):
 
         """
-        Go through dictionary of (overall) connectivities (connDict) and only take those which are needed for the 
-        specific precomplex, because they include bonds to neighbours of the reactive atoms 
+        Go through dictionary of (overall) connectivities (connDict) and only take those which are needed for the
+        specific precomplex, because they include bonds to neighbours of the reactive atoms
         (depending on the "number of spheres"=num_spheres (a sphere here is defined as a number of neighbors "distance"
         to be considered, etc.)
         """
@@ -172,14 +173,14 @@ class preCompBuild():
 
     def modify_conn(self, rule=None, id=None, fileIn=None, fileOut=None):
 
-        """ 
+        """
         Read in connectivity file (fileIn), modify onnectivity and write it again into a new file (fileOut).
         ra1: first reactive atom (of an "add" reaction)
         ra2: second reactive atom (of an "add" reaction)
         """
 
         if len(rule) == 4 or len(rule) == 8:
-            ra1 = rule[2] - 1       
+            ra1 = rule[2] - 1
             ra2 = rule[3] + id - 1
         elif len(rule) == 2:
             ra1 = rule[0] - 1
@@ -310,7 +311,7 @@ class preCompBuild():
         Translate bond/connectivity to torsional angles used for conformational search.
         [planar_fix: if True, DB are not rotated.]
 
-        """   
+        """
 
         spheres = list(bonds.keys())
         base_copy = base_rot
@@ -370,7 +371,7 @@ class preCompBuild():
         return sort_path
 
     def path_to_tors(self, sort_path, base_rot, tors=[], planar_fix=True):
-        
+
         """
         Collect torsional dihedral (of a specific value) for the required atom pairs on the sort_path
         """
@@ -565,7 +566,7 @@ class preCompBuild():
 
         # case of 1-ADD
         if len(addRule) == 4:
-            
+
             ras = list(filter((0).__ne__, addRule))
             ringsize, rings = RingSearch(obmols=self.educts, atIDs=[[ras[0], ras[1]]])
             if ringsize <= 6: # Note: 6 might not always be the best criterion here!
@@ -650,7 +651,7 @@ class preCompBuild():
 
                 breakvec = [norm_vec(atomCoord2 - atomCoord1), norm_vec(atomCoord2 - atomCoord1),
                             norm_vec(atomCoord2 - atomCoord1), norm_vec(atomCoord2 - atomCoord1)]
-                
+
 
             for i in range(len(rvecs1)):
                 for j in range(len(rvecs2)):
@@ -662,7 +663,7 @@ class preCompBuild():
                         elif rvec2_needed:
                             crossp_norm = np.linalg.norm(np.cross(rvecs2[i], breakvec))
 
-                        # for SN2-like add/break situation, only use the vector of the 4 "tetrahedral" ones, which points 
+                        # for SN2-like add/break situation, only use the vector of the 4 "tetrahedral" ones, which points
                         # away from the bond to be broken!
                         if crossp_norm != 0:
                             continue
@@ -718,7 +719,7 @@ class preCompBuild():
             ringsize, rings = RingSearch(obmols=self.educts, atIDs=[[ras_tmp[0], ras_tmp[1], ras_tmp[2], ras_tmp[3]]])
 
             if len(rings) > 1: # more than 1 ring formed!
-                
+
                 outside = False
 
                 if len(rings[0]) == len(rings[1]): # it cannot be that this is one ring within another...
@@ -794,7 +795,7 @@ class preCompBuild():
         return preCompList
 
 
-    def bimolecularReaction(self, educt_names=None, structures=None, topos=None, addRule=None, breakRule=None, 
+    def bimolecularReaction(self, educt_names=None, structures=None, topos=None, addRule=None, breakRule=None,
                             xyzFile=None, preCompList=None):
 
 
@@ -849,7 +850,7 @@ class preCompBuild():
 
         intelligentDistance = dist_weight * (2 + 0.5*np.log10(nTotal / 10))   # Note: This threshold might need to be adapted!
 
-        geomBiMol, used_rvecs, topo_keys = rvec_align(educt_names=educt_names, educts=structures, addRule=addRule[0:4], breakRules=breakRule, 
+        geomBiMol, used_rvecs, topo_keys = rvec_align(educt_names=educt_names, educts=structures, addRule=addRule[0:4], breakRules=breakRule,
                                                       topos=topos, user_dist=intelligentDistance)
 
         fortran_weights = np.asarray([
@@ -865,7 +866,7 @@ class preCompBuild():
         sadd_factor = self.prec_settings['sadd_weight']
         planar_fix = self.prec_settings['planar_fix']
 
-        max_mem = 20 
+        max_mem = 20
         iter = 0
 
         if len(addRule) == 4:
@@ -1028,7 +1029,8 @@ class preCompBuild():
             indexShift = i * shift1
             for atom in ob.OBMolAtomIter(mol["obm"]):
                 id1 = atom.GetIdx() + indexShift
-                symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+                # symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+                symbol1 = element_dict[atom.GetAtomicNum()]
                 tmp = []
                 nneigh = 0
                 for neigh in ob.OBAtomAtomIter(atom):
@@ -1040,7 +1042,8 @@ class preCompBuild():
         for atom in ob.OBMolAtomIter(shuttle_mol["obm"]):
             indexShift = shift1 + shift2
             id1 = atom.GetIdx() + indexShift
-            symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+            # symbol1 = ob.OBElementTable().GetSymbol(atom.GetAtomicNum())
+            symbol1 = element_dict[atom.GetAtomicNum()]
             tmp = []
             nneigh = 0
             for neigh in ob.OBAtomAtomIter(atom):
@@ -1053,7 +1056,7 @@ class preCompBuild():
             out.write(neighbour_dic[key] + "\n")
         out.close()
 
-    def solventShuttle(self, educts=None, educt_names=None, structures=None, topos=None, addRule=None, breakRule=None, 
+    def solventShuttle(self, educts=None, educt_names=None, structures=None, topos=None, addRule=None, breakRule=None,
                        preCompList=None, shuttle=None, shuttle_mol=None):
 
         solvent_pmg = self.solvent_pmg
@@ -1113,13 +1116,13 @@ class preCompBuild():
             #ToDo: if len(educts) == 1!!!
             if len(educts) == 1:
                 print("Warning: No shuttle for unimolecular reactions implemented!")
-                print("Submit as bimolecular reaction!")     
+                print("Submit as bimolecular reaction!")
 
             elif len(educts) == 2:
 
                 intelligentDistance = dist_weight * (2 + 0.5*np.log10(nTotal / 10))  # Muss eventuell vergrößert werden
 
-                geomBiMol, used_rvecs, topo_keys = rvec_align(educt_names=educt_names, educts=structures, addRule=add_1, breakRules=breakRule, 
+                geomBiMol, used_rvecs, topo_keys = rvec_align(educt_names=educt_names, educts=structures, addRule=add_1, breakRules=breakRule,
                                                               topos=topos, user_dist=intelligentDistance)
 
                 disc_geomBiMol, used_rvecs, topo_keys = rvec_align(educt_names=educt_names, educts=structures, addRule=add_1, breakRules=breakRule,
@@ -1130,7 +1133,7 @@ class preCompBuild():
                 solv_acc = int(shuttle[2]) + nTotal
                 solv_don = int(shuttle[1]) + nTotal
 
-                for i in range(0, len(geomBiMol)):            
+                for i in range(0, len(geomBiMol)):
                     add_1 = add_1.copy()
 
                     xyzAppend = []

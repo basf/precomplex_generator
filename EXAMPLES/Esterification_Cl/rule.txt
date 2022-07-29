@@ -1,4 +1,4 @@
-add acid-cl 1 m02 22
-add m02 21 acid-cl 17
+add acid_cl 1 m02 22
+add m02 21 acid_cl 17
 break m02 21 22
-break acid-cl 17 19
+break acid_cl 17 19

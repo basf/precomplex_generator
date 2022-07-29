@@ -1,1 +1,1 @@
-prec_gen 18k6_intra -r rule.txt
+18k6_intra -r rule.txt

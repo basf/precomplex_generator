@@ -1,1 +1,1 @@
-prec_gen ester oh-min -r rule.txt
+ester oh-min -r rule.txt
