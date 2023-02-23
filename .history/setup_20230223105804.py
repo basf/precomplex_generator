@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 # Installer for the precomplex generator scripts
 """

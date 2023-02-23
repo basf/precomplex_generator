@@ -32,7 +32,7 @@ import numpy as np
 import itertools
 import fnmatch
 import traceback
-from .element_dict import element_dict
+from element_dict import element_dict
 
 # from openbabel import OBElementTable -> OBElementTable now removed
 # // OB 2.x

@@ -25,14 +25,14 @@ try:
 except:
     pass
 
-import openbabel as ob
+from openbabel import openbabel as ob
 import os, sys
 import networkx as nx
 import numpy as np
 import itertools
 import fnmatch
 import traceback
-from .element_dict import element_dict
+from element_dict import element_dict
 
 # from openbabel import OBElementTable -> OBElementTable now removed
 # // OB 2.x

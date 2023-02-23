@@ -17,8 +17,8 @@
 
 import argparse
 from .tools import add_rule_stand, break_rule_stand, getEducts, genDisConn
-from .prep_and_align import write_out_disconn, topo_analysis
-from .precomp_builder import preCompBuild
+from prep_and_align import write_out_disconn, topo_analysis
+from precomp_builder import preCompBuild
 import os, sys
 import shutil
 import json
