@@ -14,31 +14,31 @@ def main():
 
     # extmodules
     # These are the compiled modules within this package, C/F that needs to be compiled into a .so
-    # extmodules = []
-    # extmodules.append(
-    #     Extension(
-    #         "prec_gen.get_all_torsions_mod",
-    #         [
-    #             os.path.join("fortran_source", x)
-    #             for x in [
-    #                 "get_all_torsions_mod.f90",
-    #                 # "fortran_utils.f90",
-    #             ]
-    #         ],
-    #     )
-    # )
-    # extmodules.append(
-    #     Extension(
-    #         "prec_gen.final",
-    #         [
-    #             os.path.join("fortran_source", x)
-    #             for x in [
-    #                 "final.f90",
-    #                 # "fortran_utils.f90",
-    #             ]
-    #         ],
-    #     )
-    # )
+    extmodules = []
+    extmodules.append(
+        Extension(
+            "prec_gen.get_all_torsions_mod",
+            [
+                os.path.join("fortran_source", x)
+                for x in [
+                    "get_all_torsions_mod.f90",
+                    # "fortran_utils.f90",
+                ]
+            ],
+        )
+    )
+    extmodules.append(
+        Extension(
+            "prec_gen.final",
+            [
+                os.path.join("fortran_source", x)
+                for x in [
+                    "final.f90",
+                    # "fortran_utils.f90",
+                ]
+            ],
+        )
+    )
 
     #
     # packages

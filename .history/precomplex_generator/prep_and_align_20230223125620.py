@@ -25,7 +25,7 @@ import os
 import sys
 import math
 from copy import deepcopy
-from .element_dict import element_dict
+from element_dict import element_dict
 
 
 def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):

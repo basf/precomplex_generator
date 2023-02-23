@@ -30,7 +30,7 @@ from .prep_and_align import rvec_align, addSolv
 from .precompiled_fortran_code import final
 
 from copy import deepcopy
-from .element_dict import element_dict
+from element_dict import element_dict
 
 
 from platform import python_version

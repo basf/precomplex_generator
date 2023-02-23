@@ -20,17 +20,17 @@ import os
 import sys
 import shutil
 import networkx as nx
-import openbabel as ob
+from openbabel import openbabel as ob
 import itertools
 from .precompiled_fortran_code.get_all_torsions_mod import get_tors
 import numpy as np
 from .tools import angle_func, RingSearch, get_key, norm_vec, file_read_dict, file_read_list, file_write, input_gen, reg_precomp, gen_sadd, check_for_rings
 
-from .prep_and_align import rvec_align, addSolv
-from .precompiled_fortran_code import final
+from prep_and_align import rvec_align, addSolv
+import .precompiled_fortran_code.final
 
 from copy import deepcopy
-from .element_dict import element_dict
+from element_dict import element_dict
 
 
 from platform import python_version

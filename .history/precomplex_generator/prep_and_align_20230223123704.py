@@ -19,13 +19,13 @@ import numpy as np
 import pymatgen as pmg
 import openbabel as ob
 from pymatgen.core.structure import Molecule
-from .precompiled_fortran_code import get_all_torsions_mod
-from .tools import file_read_dict, file_read_list, angle_func, norm_vec, center_of_points, rot_mat, project_onto_plane, dihed_avg, angle_avg, kov_radius, get_key
+from precompiled_fortran_code import get_all_torsions_mod
+from tools import file_read_dict, file_read_list, angle_func, norm_vec, center_of_points, rot_mat, project_onto_plane, dihed_avg, angle_avg, kov_radius, get_key
 import os
 import sys
 import math
 from copy import deepcopy
-from .element_dict import element_dict
+from element_dict import element_dict
 
 
 def topo_analysis(educt=None, educt_name=None, own_angle=None, shuttle=False):
