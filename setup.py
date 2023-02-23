@@ -78,7 +78,7 @@ def main():
         url="https://github.com/basf/precomplex_generator.git",
         packages=packages,
         entry_points=entry_points,
-        ext_modules=extmodules,
+        # ext_modules=extmodules,
         install_requires=dependencies,
         setup_requires=dependencies_setup,
         zip_safe=False,

@@ -19,13 +19,13 @@
 
 from __future__ import division, print_function, unicode_literals
 try:
-    from pymatgen import Molecule
+    from pymatgen.core import Molecule
     from pymatgen.io.babel import BabelMolAdaptor
     # from StructureGeneration.symmetry_tools import *
 except:
     pass
 
-import openbabel as ob
+from openbabel import openbabel as ob
 import os, sys
 import networkx as nx
 import numpy as np
@@ -133,7 +133,7 @@ def angle_func(v1, v2):
     """
 
     a = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
-    a = np.asscalar(a)
+    a = a.item()
     if a > 1:
         b = 0
     elif a < -1:
@@ -1026,7 +1026,7 @@ def getEducts(mols, verbose=False, adds=None):
             obm = BabelMolAdaptor(pmg).openbabel_mol
         else:
             name = mol["name"]
-            type = mol["type"]
+            # type = mol["type"]
             educt = {"name": name, "type": type}
             pmg, obm = readMols(name)
         educt["Number_of_Atoms"] = len(pmg)

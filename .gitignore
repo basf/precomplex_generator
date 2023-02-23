@@ -2,10 +2,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-**.so
-
 # Distribution / packaging
 .Python
 build/
@@ -15,3 +11,4 @@ eggs/
 .eggs/
 *.egg-info/
 *.egg
+.history/

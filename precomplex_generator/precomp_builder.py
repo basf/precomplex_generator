@@ -20,7 +20,7 @@ import os
 import sys
 import shutil
 import networkx as nx
-import openbabel as ob
+from openbabel import openbabel as ob
 import itertools
 from .precompiled_fortran_code.get_all_torsions_mod import get_tors
 import numpy as np

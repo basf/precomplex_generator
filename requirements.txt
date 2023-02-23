@@ -1,2 +1,0 @@
-pymatgen == 2021.2.8.1
-networkx == 2.5.1
