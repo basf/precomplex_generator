@@ -1,1 +1,1 @@
-m01 -r rule.txt
+prec_gen m01 -r rule.txt

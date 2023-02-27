@@ -22,12 +22,12 @@ import shutil
 import networkx as nx
 from openbabel import openbabel as ob
 import itertools
-from .precompiled_fortran_code.get_all_torsions_mod import get_tors
+from .precompiled_fortran.get_all_torsions_mod import get_tors
+from .precompiled_fortran.final import file_input
 import numpy as np
 from .tools import angle_func, RingSearch, get_key, norm_vec, file_read_dict, file_read_list, file_write, input_gen, reg_precomp, gen_sadd, check_for_rings
 
 from .prep_and_align import rvec_align, addSolv
-from .precompiled_fortran_code import final
 
 from copy import deepcopy
 from .element_dict import element_dict
@@ -697,7 +697,7 @@ class preCompBuild():
 
                     file_write(final_file=xyzFile, final_data=xyzAppend, case='intramol')
 
-                    final.file_input(xyzFile, educt_names[0] + '_conn.dat', 'intramol', fortran_weights, max_mem,
+                    file_input(xyzFile, educt_names[0] + '_conn.dat', 'intramol', fortran_weights, max_mem,
                                      len(neighborBonds), len(path), i, j, intramol_small_ring)
 
                     reg_precomp(preCompList=preCompList, input_name=educt_names[0])
@@ -779,7 +779,7 @@ class preCompBuild():
 
                     file_write(final_file=xyzFile, final_data=xyzAppend, case='intramol')
 
-                    final.file_input(xyzFile, educt_names[0] + '_conn.dat', 'intramol', fortran_weights, max_mem,
+                    file_input(xyzFile, educt_names[0] + '_conn.dat', 'intramol', fortran_weights, max_mem,
                                      len(neighborBonds), len(path), i, j, intramol_small_ring)
 
                     reg_precomp(preCompList=preCompList, input_name=educt_names[0])
@@ -902,7 +902,7 @@ class preCompBuild():
 
                 input_gen(new_data=tors, data=xyzAppend, case='tors')
                 file_write(final_file=xyzFile, final_data=xyzAppend, case='oneadd')
-                final.file_input('precomp_pre_conf.xyz', 'precomp_conn_fa.dat', 'oneadd', fortran_weights, max_mem,
+                file_input('precomp_pre_conf.xyz', 'precomp_conn_fa.dat', 'oneadd', fortran_weights, max_mem,
                                  len(neighborBonds), 0, 0, 0, intramol_small_ring)
 
                 reg_precomp(preCompList=preCompList)
@@ -1005,7 +1005,7 @@ class preCompBuild():
 
                         file_write(final_file=xyzFile, final_data=xyzAppend, case='twoadds')
 
-                        final.file_input('precomp_pre_conf.xyz', 'precomp_conn_fa.dat', 'twoadds', fortran_weights,
+                        file_input('precomp_pre_conf.xyz', 'precomp_conn_fa.dat', 'twoadds', fortran_weights,
                                           max_mem, len(neighborBonds), len(path), a, b, intramol_small_ring)
 
                         reg_precomp(preCompList=preCompList)
@@ -1204,7 +1204,7 @@ class preCompBuild():
 
                     file_write(final_file='cplx_with_solv.xyz', final_data=xyzAppend, case='shuttle')
 
-                    final.file_input('cplx_with_solv.xyz', 'precomp_solv_add.dat', 'shuttle', fortran_weights,
+                    file_input('cplx_with_solv.xyz', 'precomp_solv_add.dat', 'shuttle', fortran_weights,
                                      max_mem, len(neighborBonds), len(path), 0, 0, intramol_small_ring)
 
                     reg_precomp(preCompList=preCompList)

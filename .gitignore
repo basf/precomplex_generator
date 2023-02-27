@@ -1,8 +1,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Distribution / packaging
 .Python
 build/
 install/
@@ -12,3 +10,6 @@ eggs/
 *.egg-info/
 *.egg
 .history/
+**.dat
+**temp_precomp.xyz
+**buildPC

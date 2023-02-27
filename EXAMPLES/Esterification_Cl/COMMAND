@@ -1,1 +1,1 @@
-acid-cl m02 -r rule.txt
+prec_gen acid-cl m02 -r rule.txt
