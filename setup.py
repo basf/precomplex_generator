@@ -40,8 +40,8 @@ def main():
     setup(
         name="precomplex_generator",
         description="Generator of a precomplex structure, i.e. a suited input structure for single-ended reaction path optimization.",
-        author="Maike Bergeler",
-        author_email="maike.bergeler@basf.com",
+        author="Julian Geiger, Maike Bergeler",
+        author_email="jgeiger@iciq.es, maike.bergeler@basf.com",
         license="BASF proprietary",
         long_description="",
         url="https://github.com/basf/precomplex_generator.git",
