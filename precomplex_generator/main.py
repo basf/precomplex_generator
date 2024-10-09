@@ -24,7 +24,7 @@ from precomp_builder import preCompBuild
 import os, sys
 import shutil
 import json
-from pymatgen import Molecule
+from pymatgen.core import Molecule
 
 
 def prep_topo(educts=None, educt_names=None, own_angle=None, shuttle=None, shuttle_mol=None):
