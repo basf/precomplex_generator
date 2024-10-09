@@ -19,7 +19,7 @@
 
 from __future__ import division, print_function, unicode_literals
 try:
-    from pymatgen import Molecule
+    from pymatgen.core import Molecule
     from pymatgen.io.babel import BabelMolAdaptor
     # from StructureGeneration.symmetry_tools import *
 except:
