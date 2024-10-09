@@ -6,13 +6,13 @@ The precomplex generator is a tool for obtaining suitable input structures for a
 # Requirements:
 
 ```
-- Python3.6 
-- OpenBabel
-- numpy 
-- Cython
-- wheel
-- Networkx
-- Pymatgen
+  - python=3.10.8
+  - OpenBabel=3.1.1
+  - numpy=1.23.4
+  - Cython=3.0.11
+  - wheel=0.44.0
+  - Networkx=3.3
+  - Pymatgen=2024.9.17.1
 ```
 # How to directly use the precomplex generator:
 We provide precompiled Fortran code and Python files, which can be directly used if local library compatibility is given (RHEL7 or similar OS).
@@ -22,7 +22,8 @@ We provide precompiled Fortran code and Python files, which can be directly used
    git clone https://github.com/basf/precomplex_generator.git
 
 2. Add the PYTHONPATH to your PYTHONPATH's:
-   export PYTHONPATH=$PWD/precomplex_generator:$PYTHONPATH 
+   export PYTHONPATH=$PWD/precomplex_generator:$PYTHONPATH
+   export PYTHONPATH=$PWD/precompiled_fortran_code:$PYTHONPATH
 
 3. Add alias for convenience:
    export top_dir=$PWD 
