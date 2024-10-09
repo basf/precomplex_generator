@@ -14,9 +14,9 @@ export PYTHONPATH=${PYTHONUSERBASE}/lib/python3.6/site-packages:${PYTHONPATH}
 
 # install Python3 prerequisites
 pip3 install --ignore-installed --user pip
-pip install --user numpy==1.18.5
-pip install --user Cython
-pip install --user wheel
+pip install --user numpy==1.23.4
+pip install --user Cython==3.0.11
+pip install --user wheel==0.44.0
 
 # build and install CMake
 git clone -b v3.23.2 https://github.com/Kitware/CMake.git build/cmake
