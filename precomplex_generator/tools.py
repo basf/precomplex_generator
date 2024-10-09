@@ -133,7 +133,8 @@ def angle_func(v1, v2):
     """
 
     a = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
-    a = np.asscalar(a)
+    a = a.item()
+    
     if a > 1:
         b = 0
     elif a < -1:
